@@ -568,9 +568,10 @@ func mutatePods(
 		glog.V(2).Infof("Pod %s in namespace %s is subject to mutation", pod.GetObjectMeta().GetName(), review.Request.Namespace)
 		patchBytes, err := json.Marshal(patchOps)
 		if err != nil {
+			glog.V(2).Infof(fmt.Errorf("error!! failed to marshal patch operations %v: %v", patchOps, err).Error())
 			return nil, fmt.Errorf("failed to marshal patch operations %v: %v", patchOps, err)
 		}
-		glog.V(3).Infof("Pod %s mutation/patch result %s", pod.GetObjectMeta().GetName(), patchBytes)
+		glog.V(2).Infof("Pod %s mutation/patch result %s", pod.GetObjectMeta().GetName(), patchBytes)
 		response.Patch = patchBytes
 		patchType := admissionv1.PatchTypeJSONPatch
 		response.PatchType = &patchType

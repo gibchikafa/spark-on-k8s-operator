@@ -795,6 +795,7 @@ func addPodLifeCycleConfig(pod *corev1.Pod, app *v1beta2.SparkApplication) *patc
 	}
 
 	path := fmt.Sprintf("/spec/containers/%d/lifecycle", i)
+	glog.Infof("Path is %s", path)
 	return &patchOperation{Op: "add", Path: path, Value: *lifeCycle}
 }
 
