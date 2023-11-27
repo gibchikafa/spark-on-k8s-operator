@@ -771,7 +771,7 @@ func addPodLifeCycleConfig(pod *corev1.Pod, app *v1beta2.SparkApplication) *patc
 		containerName = config.SparkDriverContainerName
 	} else if util.IsExecutorPod(pod) {
 		lifeCycle = app.Spec.Executor.Lifecycle
-		containerName = config.SparkExecutorContainerName
+		containerName = config.Spark3DefaultExecutorContainerName
 	}
 	if lifeCycle == nil {
 		glog.V(2).Infof("Lifecycle is nil, returning....")
