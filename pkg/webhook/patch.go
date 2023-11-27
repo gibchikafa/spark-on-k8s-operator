@@ -774,11 +774,8 @@ func addPodLifeCycleConfig(pod *corev1.Pod, app *v1beta2.SparkApplication) *patc
 		containerName = config.Spark3DefaultExecutorContainerName
 	}
 	if lifeCycle == nil {
-		glog.V(2).Infof("Lifecycle is nil, returning....")
 		return nil
 	}
-
-	glog.V(2).Infof("Lifecycle is: " + lifeCycle.PreStop.String())
 
 	containerFound := false
 	i := 0
@@ -793,6 +790,8 @@ func addPodLifeCycleConfig(pod *corev1.Pod, app *v1beta2.SparkApplication) *patc
 	if !containerFound {
 		glog.Warningf("Spark container %s not found in pod %s", containerName, pod.Name)
 		return nil
+	} else {
+		glog.Infof("Spark container %s found in pod %s", containerName, pod.Name)
 	}
 
 	path := fmt.Sprintf("/spec/containers/%d/lifecycle", i)
