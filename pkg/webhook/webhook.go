@@ -310,6 +310,7 @@ func (wh *WebHook) serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp, err := json.Marshal(response)
+	glog.V(2).Infof("Response is %s", resp)
 	if err != nil {
 		internalError(w, err)
 		return
