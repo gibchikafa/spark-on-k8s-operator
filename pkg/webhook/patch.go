@@ -749,17 +749,37 @@ func hasInitContainer(pod *corev1.Pod, container *corev1.Container) bool {
 }
 
 func addTerminationGracePeriodSeconds(pod *corev1.Pod, app *v1beta2.SparkApplication) *patchOperation {
-	path := "/spec/terminationGracePeriodSeconds"
 	var gracePeriodSeconds *int64
-
+	var containerName string
+	glog.Infof("Op addTerminationGracePeriodSeconds")
 	if util.IsDriverPod(pod) {
 		gracePeriodSeconds = app.Spec.Driver.TerminationGracePeriodSeconds
+		containerName = config.SparkDriverContainerName
 	} else if util.IsExecutorPod(pod) {
 		gracePeriodSeconds = app.Spec.Executor.TerminationGracePeriodSeconds
+		containerName = config.Spark3DefaultExecutorContainerName
 	}
 	if gracePeriodSeconds == nil {
 		return nil
 	}
+
+	containerFound := false
+	i := 0
+	for ; i < len(pod.Spec.Containers); i++ {
+		if pod.Spec.Containers[i].Name == containerName {
+			containerFound = true
+			break
+		}
+	}
+
+	if !containerFound {
+		glog.Warningf("Spark container %s not found in pod %s", containerName, pod.Name)
+		return nil
+	} else {
+		glog.Infof("Spark container %s found in pod %s", containerName, pod.Name)
+	}
+
+	path := fmt.Sprintf("/spec/containers/%d/terminationGracePeriodSeconds", i)
 	return &patchOperation{Op: "add", Path: path, Value: *gracePeriodSeconds}
 }
 
